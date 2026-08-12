@@ -1,6 +1,6 @@
 {
   "name": "pi-exa",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Minimal web search for the pi coding agent. /exa command plus an agent-callable exa tool, one search engine (Exa), one API call. Reads EXA_API_KEY from the environment. Install with pi install.",
   "keywords": ["pi-package", "pi-extension", "exa", "web-search", "search"],
   "license": "MIT",

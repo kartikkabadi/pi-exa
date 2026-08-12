@@ -7,6 +7,7 @@
  */
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { execFile } from "node:child_process";
 import { Type } from "typebox";
 
 type ExaResult = {
@@ -16,10 +17,41 @@ type ExaResult = {
   highlights?: string[];
 };
 
+// EXA_API_KEY comes from the environment when pi is launched from a shell.
+// When pi is launched from a GUI app (macOS launchd), shell profile exports
+// never reach the process, so fall back to asking the user's shell directly.
+// Queried once per pi session, then cached.
+let shellKey: string | undefined;
+let shellKeyChecked = false;
+
+async function resolveApiKey(): Promise<string | undefined> {
+  const fromEnv = process.env.EXA_API_KEY;
+  if (fromEnv) return fromEnv;
+  if (!shellKeyChecked) {
+    shellKeyChecked = true;
+    const shell = process.env.SHELL || "/bin/zsh";
+    try {
+      const out = await new Promise<string>((resolve, reject) => {
+        execFile(
+          shell,
+          ["-lic", 'printf "PEXA_START%sPEXA_END" "$EXA_API_KEY"'],
+          { timeout: 5000 },
+          (err, stdout) => (err ? reject(err) : resolve(stdout)),
+        );
+      });
+      const m = out.match(/PEXA_START([A-Za-z0-9_-]{8,})PEXA_END/);
+      shellKey = m?.[1];
+    } catch {
+      shellKey = undefined;
+    }
+  }
+  return shellKey;
+}
+
 async function searchExa(
   query: string,
 ): Promise<{ ok: true; text: string } | { ok: false; error: string }> {
-  const key = process.env.EXA_API_KEY;
+  const key = await resolveApiKey();
   if (!key) {
     return {
       ok: false,
