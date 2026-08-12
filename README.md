@@ -2,12 +2,12 @@
 
 Minimal web search for the [pi coding agent](https://github.com/earendil-works/pi-coding-agent).
 
-One `/exa` command, one search engine (Exa), one API call. No tools, no providers, no dependencies — just results in your conversation, lean on context.
+One `/exa` command for you, one `exa` tool for the agent, one search engine (Exa), one API call. No providers, no dependencies — just results in your conversation, lean on context.
 
 ## Install
 
 ```bash
-pi install git:github.com/kartikkabadi/pi-exa@v0.1.0
+pi install git:github.com/kartikkabadi/pi-exa@v0.2.0
 ```
 
 Then restart pi or run `/reload`. To try it without installing: `pi -e git:github.com/kartikkabadi/pi-exa`.
@@ -19,6 +19,8 @@ Then restart pi or run `/reload`. To try it without installing: `pi -e git:githu
 ```
 
 Posts the top 5 results (title, url, date, key excerpt) into the conversation.
+
+The agent can also call the `exa` tool itself — just ask it to search the web. The tool appears in its `Available tools` list and returns the same lean results.
 
 Requires an Exa API key in the environment:
 
